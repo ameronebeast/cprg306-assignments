@@ -22,7 +22,7 @@ function LandingPage() {
                         Logout
                     </button>
                     <div className="mt-4">
-                        <a href="/week-8/shopping-list" className="text-blue-400 hover:text-purple-500">Click here to Go to Shopping List </a>
+                        <a href="/week-10/shopping-list" className="text-blue-400 hover:text-purple-500">Click here to Go to Shopping List </a>
                     </div>
                 </div>
             </div>
