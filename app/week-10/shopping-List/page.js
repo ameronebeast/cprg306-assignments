@@ -1,22 +1,60 @@
-"use client";
+// /app/week-7/page.js
 
-import React, { useState } from 'react';
-import NewItem from './new-item';
-import ItemList from './item-list';
-import itemsData from './items.json';
+"use client";
+import { useState, useEffect } from "react";
+import ItemList from "./item-list";
+import NewItem from "./new-item";
+import MealIdeas from "./meal-ideas";
+import { useUserAuth } from "../_utils/auth-context";
+import { getItems, addItem } from "../_services/shopping_list_services";
 
 const Page = () => {
-  const [items, setItems] = useState(itemsData);
+  const { user } = useUserAuth();
+  const [items, setItems] = useState([]);
+  const [selectedItemName, setSelectedItemName] = useState("");
 
-  const handleAddItem = (newItem) => {
-    setItems([...items, newItem]);
+  useEffect(() => {
+    // Load items from Firebase
+    const loadItems = async () => {
+      if (user) {
+        const itemsFromService = await getItems(user.uid);
+        setItems(itemsFromService);
+      }
+    };
+    loadItems();
+  }, [user]); // Depend on user to reload items when user changes
+
+  const handleAddItem = async (itemName) => {
+    if (user) {
+      // Ensure item is structured as an object
+      const itemObject = { name: itemName }; // Adjust this line based on the expected structure
+      const id = await addItem(user.uid, itemObject); // Add item to Firebase
+      setItems((currentItems) => [...currentItems, { ...itemObject, id }]); // Add new item with id to state
+    }
+  };
+  
+
+  const handleItemSelect = (item) => {
+    const cleanedName = item.name
+      .split(",")[0]
+      .replace(
+        /([\u2700-\u27BF]|[\uE000-\uF8FF]|�[�-�]|�[�-�]|[\u2011-\u26FF]|�[�-�])/g,
+        ""
+      )
+      .trim();
+    setSelectedItemName(cleanedName);
   };
 
+
   return (
-    <div style={{ padding: '20px' }}>
-      <NewItem onAddItem={handleAddItem} />
-      <ItemList items={items} />
-    </div>
+    <main className=" p-5 min-h-screen bg-blue-300">
+      <div className="max-w-5xl mx-auto text-black">
+        <h1 className="text-4xl font-bold text-center text-blue-900">Shopping List App</h1>
+        <NewItem onAddItem={handleAddItem} />
+        <ItemList items={items} onItemSelect={handleItemSelect} />
+      </div>
+      <MealIdeas ingredient={selectedItemName} />
+    </main>
   );
 };
 

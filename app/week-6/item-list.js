@@ -1,34 +1,65 @@
 "use client";
-import React from 'react';
-import Item from './item';
+
+import React, { useState } from 'react';
+import Item from './item'; 
 
 const ItemList = ({ items }) => {
-  // Function to sort items by name
-  const sortItemsByName = () => {
-    const sortedItems = [...items];
-    sortedItems.sort((a, b) => a.name.localeCompare(b.name));
-    return sortedItems;
-  };
+  // Initialize state variables
+  const [sortBy, setSortBy] = useState('name');
+  const [groupByCategory, setGroupByCategory] = useState(false);
 
-  // Function to sort items by category
-  const sortItemsByCategory = () => {
-    const sortedItems = [...items];
-    sortedItems.sort((a, b) => a.category.localeCompare(b.category));
-    return sortedItems;
-  };
+  // Sort and group the items based on state variables
+  const sortedItems = [...items].sort((a, b) => {
+    if (groupByCategory) {
+      return a.category.localeCompare(b.category) || a.name.localeCompare(b.name);
+    } else {
+      return sortBy === 'name' ? a.name.localeCompare(b.name) : a.category.localeCompare(b.category);
+    }
+  });
+
+  // Create buttons to change the sorting and grouping preferences
+  const nameButtonColor = sortBy === 'name' ? 'green' : 'white';
+  const categoryButtonColor = sortBy === 'category' ? 'green' : 'white';
+  const groupByCategoryButtonColor = groupByCategory ? 'green' : 'white';
 
   return (
-    <div style={{ marginTop: '20px' }}>
-      <h2>Items</h2>
-      <div>
-        <button style={{ marginRight: '10px', padding: '5px 10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={sortItemsByName}>Sort by Name</button>
-        <button style={{ padding: '5px 10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={sortItemsByCategory}>Sort by Category</button>
-      </div>
-      <ul style={{ listStyle: 'none', padding: '0' }}>
-        {items.map(item => (
-          <Item key={item.id} item={item} />
-        ))}
-      </ul>
+    <div>
+      {/* Sort Buttons */}
+      <button onClick={() => setSortBy('name')} style={{ backgroundColor: nameButtonColor }}className='space-y-2 px-4 py-2 bg-orange-500 text-black  rounded hover:bg-orange-600 focus:outline-none space-y-2'>
+        Sort by Name
+      </button>
+      <button onClick={() => setSortBy('category')} style={{ backgroundColor: categoryButtonColor }}className='px-4 py-2 bg-orange-500 text-black rounded hover:bg-orange-600 focus:outline-none'>
+        Sort by Category
+      </button>
+
+      <button onClick={() => setGroupByCategory(!groupByCategory)} style={{ backgroundColor: groupByCategoryButtonColor }}className='px-4 py-2 bg-orange-500 text-black rounded hover:bg-orange-600 focus:outline-none'>
+        Group by Category
+      </button>
+
+      {groupByCategory ? (
+        // Grouped by Category
+        Object.entries(
+          sortedItems.reduce((acc, item) => {
+            const category = item.category;
+            acc[category] = [...(acc[category] || []), item];
+            return acc;
+          }, {})
+        ).map(([category, categoryItems]) => (
+          <div key={category}>
+            <h2 className="text-white text-2xl font-bold capitalize">{category}</h2>
+            <ul>
+              {categoryItems.map((item) => (
+                <li key={item.id}>
+                  <Item key={item.id} name={item.name} quantity={item.quantity} category={item.category} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      ) : (
+        // Not Grouped
+        sortedItems.map((item) => <Item key={item.id} name={item.name} quantity={item.quantity} category={item.category} />)
+      )}
     </div>
   );
 };

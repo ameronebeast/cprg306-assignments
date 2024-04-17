@@ -1,63 +1,84 @@
-"use-client";
-
+"use client";
 import React, { useState } from 'react';
 
-const NewItem = ({ onAddItem }) => {
-  const [name, setName] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [category, setCategory] = useState('');
+export default function NewItem({ onAddItem }) {
+  const [name, setName] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [category, setCategory] = useState("produce");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const generateRandomId = () => {
+    return '_' + Math.random().toString(36).substr(2, 9);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
     const newItem = {
-      id: Math.random().toString(36).substr(2, 9), // Random ID generation
-      name: name,
-      quantity: quantity,
-      category: category
+      id: generateRandomId(),
+      name,
+      quantity,
+      category,
     };
+
+    // Call the onAddItem prop with the new item object
     onAddItem(newItem);
-    setName('');
-    setQuantity('');
-    setCategory('');
+
+    // Reset form inputs
+    setName("");
+    setQuantity(1);
+    setCategory("produce");
   };
 
   return (
-    <div style={{ marginBottom: '20px' }}>
-      <h2>Add New Item</h2>
-      <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="space-y-3">
+      
+        <label htmlFor="name" className="block text-xl font-medium text-gray-900">Item Name</label>
         <input
           type="text"
-          placeholder="Name"
+          id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          required
+          className="flex-1 mt-8 p-2 border border-black rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Enter item name"
         />
+
+      <div>
+        <label htmlFor="quantity" className="block text-xl font-medium text-gray-900">Quantity</label>
         <input
           type="number"
-          placeholder="Quantity"
+          id="quantity"
           value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+          className="mt-1 block w-full p-2 border border-gray-200 rounded-md shadow-sm"
         />
+      </div>
+
+      <div>
+        <label htmlFor="category" className="block text-xl font-medium text-gray-900">Category</label>
         <select
+          id="category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          className="mt-1 block w-full p-2 border border-gray-200 rounded-md shadow-sm bg-white"
         >
-          <option value="">Select Category</option>
-          <option value="Groceries">Groceries</option>
-          <option value="Electronics">Electronics</option>
-          <option value="Clothing">Clothing</option>
+         <option value="produce">Produce</option>
+          <option value="dairy">Dairy</option>
+          <option value="bakery">Bakery</option>
+          <option value="meat">Meat</option>
+          <option value="frozen">Frozen Foods</option>
+          <option value="canned">Canned Goods</option>
+          <option value="dry">Dry Goods</option>
+          <option value="beverages">Beverages</option>
+          <option value="snacks">Snacks</option>
+          <option value="household">Household</option>
+          <option value="other">Other</option>
         </select>
-        <button
-          type="submit"
-          style={{ padding: '10px 20px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-        >
-          Add Item
-        </button>
-      </form>
-    </div>
-  );
-};
+      </div>
 
-export default NewItem;
+      <button type="submit" className="py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-800">
+        Add Item
+      </button>
+    </form>
+  );
+}

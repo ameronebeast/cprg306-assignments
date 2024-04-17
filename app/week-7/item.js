@@ -1,11 +1,21 @@
+"use client";
 import React from 'react';
 
-const Item = ({ item }) => {
+const Item = ({ name, quantity, category, onSelect}) => {
   return (
-    <li style={{ backgroundColor: '#f9f9f9', border: '1px solid #ccc', marginBottom: '10px', padding: '10px', borderRadius: '5px' }}>
-      <strong>Name:</strong> {item.name} - <strong>Quantity:</strong> {item.quantity} - <strong>Category:</strong> {item.category}
+    <li className=" bg-blue-200 border-gray-400 border p-4 mb-4 rounded-lg">
+        onClick={onSelect}
+         
+      <div className=" flex items-center justify justify-between">
+        <div>
+            <p  className="text-black font-bold text-lg mb-2">{name}</p>
+            <p  className="text-black">Quantity: {quantity}</p>
+        </div>
+        <span className="text-black">Category: {category}</span>
+      </div>
     </li>
   );
 };
 
 export default Item;
+
