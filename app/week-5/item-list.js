@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
-import Item from './item'; 
+import Item from './item';
+import itemsData from './items.json'; 
 
 const ItemList = ({ items }) => {
   // Initialize state variables
@@ -8,7 +9,7 @@ const ItemList = ({ items }) => {
   const [groupByCategory, setGroupByCategory] = useState(false);
 
   // Sort and group the items based on state variables
-  const sortedItems = [...(items || [])].sort((a, b) => {
+  const sortedItems = [...(itemsData || [])].sort((a, b) => {
     if (groupByCategory) {
       return a.category.localeCompare(b.category) || a.name.localeCompare(b.name);
     } else {
